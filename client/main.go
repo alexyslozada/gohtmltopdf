@@ -4,9 +4,14 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 const html = `
@@ -26,18 +31,39 @@ const html = `
 </html>
 `
 
+const (
+	InternalCodeKey = "INTERNAL_CODE"
+	PortKey         = "HTTP_PORT"
+)
+
+type Config struct {
+	internalCode string
+	port         string
+}
+
 type request struct {
 	Data string `json:"data"`
 }
 
 func main() {
+	envFilePath := flag.String("envfile", ".env", "Path to the .env file. Default: .env")
+	flag.Parse()
+
+	err := loadEnvs(*envFilePath)
+	if err != nil {
+		log.Fatalf("Couldn´t read de env file in %q path, error: %v", *envFilePath, err)
+	}
+
 	src := request{Data: html}
 	data, err := json.Marshal(src)
 	if err != nil {
 		log.Fatalf("error marshaling json: %v", err)
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "http://localhost:9632/html-to-pdf/ABCD-EFGHI-JKLMN-OPQRS-TUVWXYZ", bytes.NewReader(data))
+	config := parseEnvToConfig()
+
+	url := fmt.Sprintf("http://localhost:%s/html-to-pdf/%s", config.port, config.internalCode)
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, url, bytes.NewReader(data))
 	if err != nil {
 		log.Fatalf("error creating the request: %v", err)
 	}
@@ -68,6 +94,20 @@ func main() {
 	err = writeFile(respData["data"])
 	if err != nil {
 		log.Fatalf("error writing file: %v", err)
+	}
+}
+
+func loadEnvs(envFilePath string) error {
+	return godotenv.Load(envFilePath)
+}
+
+func parseEnvToConfig() Config {
+	internalCode := os.Getenv(InternalCodeKey)
+	port := os.Getenv(PortKey)
+
+	return Config{
+		internalCode: internalCode,
+		port:         port,
 	}
 }
 
