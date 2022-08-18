@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 )
@@ -41,4 +42,22 @@ func (h Handler) CreatePDF(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string][]byte{"data": pdf})
+}
+
+func (h Handler) Health(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{"date": time.Now().String()})
+}
+
+const ParamInternalCode = "internal"
+
+// ValidateInternalCode to validate the internal code
+func (h Handler) ValidateInternalCode(next echo.HandlerFunc, internalCode string) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		internalSent := c.Param(ParamInternalCode)
+		if internalSent != internalCode {
+			return c.JSON(http.StatusBadRequest, map[string]string{"error": "The internal code sent is not valid"})
+		}
+
+		return next(c)
+	}
 }
