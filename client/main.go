@@ -37,7 +37,7 @@ func main() {
 		log.Fatalf("error marshaling json: %v", err)
 	}
 
-	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "http://localhost:9632/html-to-pdf", bytes.NewReader(data))
+	req, err := http.NewRequestWithContext(context.Background(), http.MethodPost, "http://localhost:9632/html-to-pdf/ABCD-EFGHI-JKLMN-OPQRS-TUVWXYZ", bytes.NewReader(data))
 	if err != nil {
 		log.Fatalf("error creating the request: %v", err)
 	}
