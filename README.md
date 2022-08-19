@@ -47,3 +47,32 @@ If you want to run the client:
 ```bash
 go run client/main.go
 ```
+
+## Using Docker
+
+If you need to use the service into a Docker image, you can follow this steps:
+
+1. Compile to Linux
+
+```bash
+GOOS=linux go build -o gohtmltopdf cmd/main.go
+```
+
+2. Configure the `.env`
+
+```bash
+cp .env.example .env
+# Edit the file with your desire config.
+```
+
+3. Create the docker image
+
+```bash
+docker build -t alexys/gohtmltopdf .
+```
+
+4. Run the deamon
+
+```bash
+docker run --name myhtmltopdf -d alexys/gohtmltopdf
+```
