@@ -74,5 +74,5 @@ docker build -t alexys/gohtmltopdf .
 4. Run the deamon
 
 ```bash
-docker run --name myhtmltopdf -d alexys/gohtmltopdf
+docker run --name myhtmltopdf -p 8080:8080 -d alexys/gohtmltopdf
 ```
