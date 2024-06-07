@@ -55,7 +55,7 @@ If you need to use the service into a Docker image, you can follow this steps:
 1. Compile to Linux
 
 ```bash
-GOOS=linux go build -o gohtmltopdf cmd/main.go
+GOOS=linux go build -ldflags "-s -w" -o gohtmltopdf cmd/main.go
 ```
 
 2. Configure the `.env`
