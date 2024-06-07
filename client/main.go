@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -23,8 +23,18 @@ const html = `
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <style>
+	.page-break {
+		page-break-before: always;
+	}
+    </style>
 </head>
 <body>
+    <h1 style="font-family: sans-serif; font-size: 4rem;">Hola mundo</h1>
+    <p style="font-family: serif; font-size: 0.8rem;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur doloribus nam nemo odio quam quo repudiandae sunt tenetur. Ab aliquam aut beatae dicta minus nesciunt quam quidem similique, temporibus vero.</p>
+
+	<div class="page-break"></div>
+
     <h1 style="font-family: sans-serif; font-size: 4rem;">Hola mundo</h1>
     <p style="font-family: serif; font-size: 0.8rem;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequuntur doloribus nam nemo odio quam quo repudiandae sunt tenetur. Ab aliquam aut beatae dicta minus nesciunt quam quidem similique, temporibus vero.</p>
 </body>
@@ -76,7 +86,7 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Fatalf("error reading the body: %v", err)
 	}
@@ -113,5 +123,5 @@ func parseEnvToConfig() Config {
 
 // writeFile is only for test proposes. --*Don´t use it*--
 func writeFile(data []byte) error {
-	return ioutil.WriteFile("test.pdf", data, 0666)
+	return os.WriteFile("test.pdf", data, 0666)
 }
