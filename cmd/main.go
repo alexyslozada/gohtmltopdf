@@ -34,9 +34,7 @@ func main() {
 	config := parseEnvToConfig()
 
 	e := echo.New()
-	handler := gohtmltopdf.NewHandler()
-	e.GET("/health", handler.Health)
-	e.POST("/html-to-pdf/:internal", handler.ValidateInternalCode(handler.CreatePDF, config.internalCode))
+	gohtmltopdf.Router(e, config.internalCode)
 
 	err = e.Start(fmt.Sprintf(":%s", config.port))
 	if err != nil {
